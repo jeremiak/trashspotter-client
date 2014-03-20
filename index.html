@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head>
+  <body>
+    <h1>TrashSpotter</h1>
+    <h3 id="trash">Trash</h3>
+    <script type="text/javascript">
+      var ts = {};
+
+      ts.getLocation = function () {
+        function success(data) {
+          console.log('location successfully retrieved');
+          ts['coords'] = data['coords'];
+        }
+        function error(reason) {
+          console.log(reason);
+        }
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(success, error);
+        } else {
+          error('not supported');
+        }
+      };
+      ts.registerGarbageCan = function() {
+        var parameters,
+            xhr = new XMLHttpRequest();
+
+        parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
+        xhr.open('POST', 'http://trashspotter-api.herokuapp.com/garbage_can');
+        xhr.send(parameters);
+      };
+      
+      ts.init = function() {
+        ts.getLocation();
+        document.getElementById('trash').addEventListener('click', ts.registerGarbageCan);
+      };
+
+      ts.init();
+    </script>
+  </body>
+</html>
