@@ -35,10 +35,11 @@
         }
       };
       ts.registerGarbageCan = function() {
-        var parameters,
+        var date = Date.now(),
+            parameters,
             xhr = new XMLHttpRequest();
 
-        parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
+        parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude'] + '&date=' + date);
         xhr.open('POST', ts.herokuHost + '/garbage_can');
         xhr.send(parameters);
       };
