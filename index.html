@@ -2,13 +2,24 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css">
+      body {
+        text-align:center;
+      }
+    </style>
   </head>
   <body>
     <h1>TrashSpotter</h1>
-    <h3 id="trash">Trash</h3>
+    <h3 id="trash" class="glyphicon glyphicon-trash"></h3>
     <script type="text/javascript">
       var ts = {};
-
+      ts.herokuHost = 'http://trashspotter-api.herokuapp.com';
+      ts.pingHeroku = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', ts.herokuHost + '/awake');
+        xhr.send();
+      };
       ts.getLocation = function () {
         function success(data) {
           console.log('location successfully retrieved');
@@ -28,7 +39,7 @@
             xhr = new XMLHttpRequest();
 
         parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
-        xhr.open('POST', 'http://trashspotter-api.herokuapp.com/garbage_can');
+        xhr.open('POST', ts.herokuHost + '/garbage_can');
         xhr.send(parameters);
       };
       
