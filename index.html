@@ -3,18 +3,46 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//getbootstrap.com/examples/sticky-footer/sticky-footer.css">
     <style type="text/css">
-      body {
+      .row {
+        padding-top:9px;
         text-align:center;
       }
-      h3 {
+      a#trash {
+        opacity:0.5;
         font-size:60pt;
+        text-decoration:none;
+      }
+      a:hover {
+        text-decoration:none;
+        }
+      a:active {
+        opacity:1.0;
+      }
+      #footer span {
+        margin-right:7px;
       }
     </style>
   </head>
   <body>
-    <h1>TrashSpotter</h1>
-    <h3 id="trash" class="glyphicon glyphicon-trash"></h3>
+    <div class="container">
+      <div class="row">
+        <h1>TrashSpotter</h1>
+      </div>
+      <div class="row">
+        <a id="trash" class="glyphicon glyphicon-trash"></a>
+      </div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <div class="row">
+          <a class="text-muted" href="map.html"><span class="glyphicon glyphicon-globe"></span>Map of trash cans</a>
+        </div>
+      </div>
+    </div>
+    
     <script type="text/javascript">
       var ts = {};
       ts.googleForm = 'https://docs.google.com/forms/d/1sRrEC48obY6ZXZX3zoJYUZ-GBVZq3YJktRufCixO__Y/formResponse';
@@ -33,6 +61,11 @@
           error('not supported');
         }
       };
+      ts.pingHeroku = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', ts.herokuHost);
+        xhr.send();
+      };
       ts.registerGarbageCan = function() {
         var parameters,
             xhr = new XMLHttpRequest();
@@ -40,10 +73,12 @@
         parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
         xhr.open('POST', ts.herokuHost + '/garbage_can');
         xhr.send(parameters);
+        alert('Thanks for the submission');
       };
       
       ts.init = function() {
         ts.getLocation();
+        ts.pingHeroku();
         document.getElementById('trash').addEventListener('click', ts.registerGarbageCan);
       };
 
