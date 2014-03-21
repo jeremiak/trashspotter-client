@@ -9,16 +9,10 @@
         padding-top:9px;
         text-align:center;
       }
-      a#trash {
+      .glyphicon-trash {
         opacity:0.5;
         font-size:60pt;
         text-decoration:none;
-      }
-      a:hover {
-        text-decoration:none;
-        }
-      a:active {
-        opacity:1.0;
       }
       #footer span {
         margin-right:7px;
@@ -31,7 +25,10 @@
         <h1>TrashSpotter</h1>
       </div>
       <div class="row">
-        <a id="trash" class="glyphicon glyphicon-trash"></a>
+        <span class="glyphicon glyphicon-trash"></span>
+      </div>
+      <div class="row">
+        <button id="trash" type="button" class="btn btn-primary btn-lg">I'm next to a trash can!</button>
       </div>
     </div>
 
@@ -73,7 +70,7 @@
         parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
         xhr.open('POST', ts.herokuHost + '/garbage_can');
         xhr.send(parameters);
-        alert('Thanks for the submission');
+        alert('Got it!');
       };
       
       ts.init = function() {
