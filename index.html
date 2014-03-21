@@ -70,7 +70,14 @@
         parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
         xhr.open('POST', ts.herokuHost + '/garbage_can');
         xhr.send(parameters);
-        alert('Got it!');
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState==4 && xhr.status==200) {
+            alert('Got it!');
+          }
+          else {
+            alert('Try again');
+          }
+        };
       };
       
       ts.init = function() {
