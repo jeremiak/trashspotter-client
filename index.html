@@ -17,12 +17,8 @@
     <h3 id="trash" class="glyphicon glyphicon-trash"></h3>
     <script type="text/javascript">
       var ts = {};
+      ts.googleForm = 'https://docs.google.com/forms/d/1sRrEC48obY6ZXZX3zoJYUZ-GBVZq3YJktRufCixO__Y/formResponse';
       ts.herokuHost = 'http://trashspotter--api-herokuapp-com-ptypn8aumpr3.runscope.net';
-      ts.pingHeroku = function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', ts.herokuHost + '/awake');
-        xhr.send();
-      };
       ts.getLocation = function () {
         function success(data) {
           console.log('location successfully retrieved');
@@ -38,11 +34,10 @@
         }
       };
       ts.registerGarbageCan = function() {
-        var date = Date.now(),
-            parameters,
+        var parameters,
             xhr = new XMLHttpRequest();
 
-        parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude'] + '&date=' + date);
+        parameters = encodeURI('entry.1008485168=' + ts['coords']['latitude'] + ',' + ts['coords']['longitude']);
         xhr.open('POST', ts.herokuHost + '/garbage_can');
         xhr.send(parameters);
       };
