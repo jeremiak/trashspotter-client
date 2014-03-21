@@ -74,7 +74,7 @@
           if (xhr.readyState==4 && xhr.status==200) {
             alert('Got it!');
           }
-          else {
+          else if (xhr.readyState==4 && xhr.status!=200){
             alert('Try again');
           }
         };
