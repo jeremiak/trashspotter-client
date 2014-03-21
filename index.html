@@ -38,7 +38,7 @@
             xhr = new XMLHttpRequest();
 
         parameters = encodeURI('entry.1008485168=' + ts['coords']['latitude'] + ',' + ts['coords']['longitude']);
-        xhr.open('POST', ts.herokuHost + '/garbage_can');
+        xhr.open('POST', ts.googleForm + '/garbage_can');
         xhr.send(parameters);
       };
       
