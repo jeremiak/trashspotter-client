@@ -28,65 +28,82 @@
         <span class="glyphicon glyphicon-trash"></span>
       </div>
       <div class="row">
-        <button id="trash" type="button" class="btn btn-primary btn-lg">I'm next to a trash can!</button>
+        <button id="trash" type="button" class="btn btn-primary btn-lg">
+          I'm next to a trash can!</button>
       </div>
     </div>
 
     <div id="footer">
       <div class="container">
         <div class="row">
-          <a class="text-muted" href="map.html"><span class="glyphicon glyphicon-globe"></span>Map of trash cans</a>
+          <a class="text-muted" href="map.html"><span 
+              class="glyphicon glyphicon-globe"></span>Map of trash cans</a>
         </div>
       </div>
     </div>
     
     <script type="text/javascript">
-      var ts = {};
-      ts.googleForm = 'https://docs.google.com/forms/d/1sRrEC48obY6ZXZX3zoJYUZ-GBVZq3YJktRufCixO__Y/formResponse';
-      ts.herokuHost = 'http://trashspotter--google--proxy-herokuapp-com-ptypn8aumpr3.runscope.net';
-      ts.getLocation = function () {
-        function success(data) {
-          console.log('location successfully retrieved');
-          ts['coords'] = data['coords'];
-        }
-        function error(reason) {
-          console.log(reason);
-        }
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(success, error);
-        } else {
-          error('not supported');
-        }
-      };
-      ts.pingHeroku = function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', ts.herokuHost);
-        xhr.send();
-      };
-      ts.registerGarbageCan = function() {
-        var parameters,
-            xhr = new XMLHttpRequest();
+      (function() {
+        var ts = {};
+        ts.googleForm = 'https://docs.google.com/forms/d/1sRrEC48obY6ZXZX3zoJYUZ-GBVZq3YJktRufCixO__Y/formResponse';
+        ts.herokuHost = 'http://trashspotter--google--proxy-herokuapp-com-ptypn8aumpr3.runscope.net';
 
-        parameters = encodeURI('lat=' + ts['coords']['latitude'] + '&long=' + ts['coords']['longitude']);
-        xhr.open('POST', ts.herokuHost + '/garbage_can');
-        xhr.send(parameters);
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState==4 && xhr.status==200) {
-            alert('Got it!');
-          }
-          else if (xhr.readyState==4 && xhr.status!=200){
-            alert('Try again');
+        ts.pingHeroku = function() {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', ts.herokuHost);
+          xhr.send();
+        };
+
+        ts.getLocation = function(opts) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(opts.success, opts.error);
+          } else {
+            opts.error && opts.error("Location not supported");
           }
         };
-      };
-      
-      ts.init = function() {
-        ts.getLocation();
-        ts.pingHeroku();
-        document.getElementById('trash').addEventListener('click', ts.registerGarbageCan);
-      };
 
-      ts.init();
+        ts.handleRegisterGarbageCanClick = function(ev) {
+          ev.preventDefault();
+          ts.registerGarbageCan();
+        }
+
+        ts.registerGarbageCan = function(ev) {
+
+          ts.getLocation({
+            success: function(data) {
+              var xhr = new XMLHttpRequest(),
+                  coords,
+                  parameters;
+
+              coords = data['coords'];
+              parameters = encodeURI('lat=' + coords['latitude'] + 
+                '&long=' + coords['longitude']);
+              xhr.open('POST', ts.herokuHost + '/garbage_can');
+              xhr.send(parameters);
+              xhr.onreadystatechange = function() {
+                if (xhr.readyState==4 && xhr.status==200) {
+                  alert('Got it!');
+                }
+                else if (xhr.readyState==4 && xhr.status!=200){
+                  alert('Try again');
+                }
+              };
+            },
+            error: function(err) { 
+              console.debug(err);
+              alert('There was an error trying to save location'); 
+            }
+          });
+        };
+
+        ts.init = function() {
+          ts.pingHeroku();
+          document.getElementById('trash').addEventListener('click', 
+              ts.handleRegisterGarbageCanClick);
+        };
+
+        ts.init();
+      })();
     </script>
   </body>
 </html>
