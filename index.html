@@ -91,7 +91,7 @@
             },
             error: function(err) { 
               console.debug(err);
-              alert('There was an error trying to save location ' + err); 
+              alert('There was an error trying to save location ' + err.message); 
             }
           });
         };
