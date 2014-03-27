@@ -27,6 +27,7 @@
 
      .container {
        margin: auto;
+       pointer-events: auto;
      }
      
      .overlay {
@@ -140,8 +141,8 @@
               mapOpts);
 
           if (coords) {
-            geoLocate = new google.maps.LatLng(position.coords.latitude, 
-                position.coords.longitude);
+            geoLocate = new google.maps.LatLng(coords.latitude, 
+                coords.longitude);
 
             map.setCenter(geoLocate);
 
