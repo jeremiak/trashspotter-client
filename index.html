@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//getbootstrap.com/examples/sticky-footer/sticky-footer.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://getbootstrap.com/examples/sticky-footer/sticky-footer.css">
     <style type="text/css">
       .row {
         padding-top:9px;
@@ -30,11 +30,12 @@
      }
      
      .overlay {
-       width: 100%;
+       pointer-events:none;
        position: absolute;
+       width: 100%;
      }
     </style>
-    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
   </head>
   <body>
     <div id="google_canvas"></div>
@@ -66,8 +67,13 @@
     <script type="text/javascript">
       (function() {
         var ts = {};
+        ts.DEFAULT_ZOOM = 18;
+        ts.DEFAULT_LAT = 37.7793;
+        ts.DEFAULT_LNG = -122.4175;
+
         ts.googleForm = 'https://docs.google.com/forms/d/1sRrEC48obY6ZXZX3zoJYUZ-GBVZq3YJktRufCixO__Y/formResponse';
         ts.herokuHost = 'http://trashspotter--google--proxy-herokuapp-com-ptypn8aumpr3.runscope.net';
+        ts.marker;
 
         ts.pingHeroku = function() {
           var xhr = new XMLHttpRequest();
@@ -124,8 +130,8 @@
               coords = data && data.coords;
             
           mapOpts = {
-            center: new google.maps.LatLng(37.7793, -122.4175),
-            zoom: 15,
+            center: new google.maps.LatLng(ts.DEFAULT_LAT, ts.DEFAULT_LNG),
+            zoom: ts.DEFAULT_ZOOM,
             mapTypeId: google.maps.MapTypeId.ROADMAP
           }
 
@@ -136,7 +142,13 @@
             geoLocate = new google.maps.LatLng(position.coords.latitude, 
                 position.coords.longitude);
 
-            map.setCenter(geolocate);
+            map.setCenter(geoLocate);
+
+            ts.marker = new google.maps.Marker({
+              position: geoLocate,
+              title: 'Current Location',
+              map: map
+            });
           }
 
           return map;
