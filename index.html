@@ -17,19 +17,40 @@
       #footer span {
         margin-right:7px;
       }
+     #google_canvas { 
+       height: 100%;
+       left: 0;
+       position:absolute;
+       top: 0;
+       width: 100%;
+     }
+
+     .container {
+       margin: auto;
+     }
+     
+     .overlay {
+       width: 100%;
+       position: absolute;
+     }
     </style>
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
   </head>
   <body>
-    <div class="container">
-      <div class="row">
-        <h1>TrashSpotter</h1>
-      </div>
-      <div class="row">
-        <span class="glyphicon glyphicon-trash"></span>
-      </div>
-      <div class="row">
-        <button id="trash" type="button" class="btn btn-primary btn-lg">
-          I'm next to a trash can!</button>
+    <div id="google_canvas"></div>
+
+    <div class="overlay">
+      <div class="container">
+        <div class="row">
+          <h1>TrashSpotter</h1>
+        </div>
+        <div class="row">
+          <span class="glyphicon glyphicon-trash"></span>
+        </div>
+        <div class="row">
+          <button id="trash" type="button" class="btn btn-primary btn-lg">
+            I'm next to a trash can!</button>
+        </div>
       </div>
     </div>
 
@@ -75,16 +96,16 @@
                   coords,
                   parameters;
 
-              coords = data['coords'];
-              parameters = encodeURI('lat=' + coords['latitude'] + 
-                '&long=' + coords['longitude']);
+              coords = data.coords;
+              parameters = encodeURI('lat=' + coords.latitude + 
+                '&long=' + coords.longitude + coords.accuracy);
               xhr.open('POST', ts.herokuHost + '/garbage_can');
               xhr.send(parameters);
               xhr.onreadystatechange = function() {
-                if (xhr.readyState==4 && xhr.status==200) {
+                if (xhr.readyState === 4 && xhr.status === 200) {
                   alert('Got it!');
                 }
-                else if (xhr.readyState==4 && xhr.status!=200){
+                else if (xhr.readyState === 4 && xhr.status !== 200){
                   alert('Try again');
                 }
               };
@@ -96,8 +117,41 @@
           });
         };
 
+        ts.initMap = function(data) {
+          var map, 
+              mapOpts,
+              geoLocate,
+              coords = data && data.coords;
+            
+          mapOpts = {
+            center: new google.maps.LatLng(37.7793, -122.4175),
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          }
+
+          map = new google.maps.Map(document.getElementById('google_canvas'), 
+              mapOpts);
+
+          if (coords) {
+            geoLocate = new google.maps.LatLng(position.coords.latitude, 
+                position.coords.longitude);
+
+            map.setCenter(geolocate);
+          }
+
+          return map;
+        };
+
         ts.init = function() {
           ts.pingHeroku();
+          ts.getLocation({
+            success: function(data) {
+              ts.map = ts.initMap(data);
+            },
+            error: function() {
+              ts.map = ts.initMap();
+            }
+          });
           document.getElementById('trash').addEventListener('click', 
               ts.handleRegisterGarbageCanClick);
         };
