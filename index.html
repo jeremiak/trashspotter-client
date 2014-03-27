@@ -104,7 +104,8 @@
 
               coords = data.coords;
               parameters = encodeURI('lat=' + coords.latitude + 
-                '&long=' + coords.longitude + coords.accuracy);
+                '&long=' + coords.longitude + 
+                '&accuracy=' + coords.accuracy);
               xhr.open('POST', ts.herokuHost + '/garbage_can');
               xhr.send(parameters);
               xhr.onreadystatechange = function() {
