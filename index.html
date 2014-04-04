@@ -2,8 +2,8 @@
 <head>
   <meta charset="utf-8">
 
-  <title>My Parse App</title>
-  <meta name="description" content="My Parse App">
+  <title>trashspotter</title>
+  <meta name="description" content="trashspot">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/styles.css">
@@ -14,13 +14,13 @@
 <body>
   
   <div id="main">
-    <h1>You're ready to use Parse!</h1>
+    <h1>OMG find the trashcans. </h1>
 
-    <p>Read the documentation and start building your JavaScript app:</p>
+    <p>with parse(.com) as the database and all javascript that runs client side</p>
 
     <ul>
-      <li><a href="https://www.parse.com/docs/js_guide">Parse JavaScript Guide</a></li>
-      <li><a href="https://www.parse.com/docs/js">Parse JavaScript API Documentation</a></li>
+      <li>need map to show existing locations</li>
+      <li> need much more</li>
     </ul>
 
     <div style="display:none" class="error">
@@ -38,11 +38,12 @@
     </div>
   </div>
   <p>
-  <p id="demo">Click the button to get your coordinates:</p>
-  <button onclick="getLocation()">Try It</button>
-  <p>
+  <p>we think you're here:</p>
+    <p id="curr_loc">  </p>
   <div id="mapholder"></div>
+ <button onclick="submitLocation()">I'm next to a trash can!</button>
 
+<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
   <script type="text/javascript">
     Parse.initialize("mdcl9TzaR9eXsEnUdIhGtUGqUBwLQbHlKIyKhl1G", "NDdDQsfMWLAPHTjI8ctVFEdCJsYTxcoy00Q7beKu");    
     var TestObject = Parse.Object.extend("TestObject");
@@ -57,29 +58,40 @@
 
     });
 
-var x=document.getElementById("demo");
-function getLocation()
-  {
-  if (navigator.geolocation)
-    {
-    navigator.geolocation.getCurrentPosition(showPosition);
-    }
-  else{x.innerHTML="Geolocation is not supported by this browser.";}
-  }
+var x=document.getElementById("curr_loc");
+navigator.geolocation.watchPosition(showPosition);
+
+
 function showPosition(position)
   {
-  x.innerHTML="Latitude: " + position.coords.latitude + 
-  "<br>Longitude: " + position.coords.longitude +
-  "<br>accuracy in meters: " + position.coords.accuracy;  
-  
+  lat=position.coords.latitude;
+  lon=position.coords.longitude;
+  latlon=new google.maps.LatLng(lat, lon)
+  acc=position.coords.accuracy
+  x.innerHTML="position data: " + latlon + acc;  
+  mapholder=document.getElementById('mapholder')
+  mapholder.style.height='250px';
+  mapholder.style.width='100%';
 
-var latlon = position.coords.latitude + "," + position.coords.longitude;
+  var myOptions={
+  center:latlon,zoom:14,
+  mapTypeId:google.maps.MapTypeId.ROADMAP,
+  mapTypeControl:false,
+  navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+  };
+  var map=new google.maps.Map(document.getElementById("mapholder"),myOptions);
+  var marker=new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
 
-var img_url = "http://maps.googleapis.com/maps/api/staticmap?center="
-+latlon+"&zoom=14&size=400x300&sensor=false";
+  // var img_url = "http://maps.googleapis.com/maps/api/staticmap?center="
+  // +latlon+"&zoom=14&size=400x300&sensor=false";
 
-document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
-}
+  // document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
+  }
+
+function submitLocation()
+  {
+  }
+
   </script>
 </body>
 
