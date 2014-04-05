@@ -34,7 +34,7 @@
   <p>green = existing cans, red = you</p>
     <p id="curr_loc">  </p>
   <div id="mapholder"></div>
- <button onclick="submitLocation()">I'm next to a trash can!</button>
+ <button onclick="putPos()">I'm next to a trash can!</button>
 
 <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
   <script type="text/javascript">
@@ -52,8 +52,10 @@
     });
 
 var x=document.getElementById("curr_loc");
-navigator.geolocation.watchPosition(showPosition);
+watchId = navigator.geolocation.watchPosition(showPosition);
 
+// setInterval(function(){navigator.geolocation.getCurrentPosition(showPosition)},10000)
+// that behaves weirdly
 
 function showPosition(position)
   {
@@ -98,14 +100,14 @@ function showPosition(position)
   });
   }
 
-function getPos(position)
-  {
-  return position;
-  }
-function submitLocation()
+function putPos() {
+  navigator.geolocation.clearWatch(watchId)
+  navigator.geolocation.getCurrentPosition(submitLocation)
+
+}
+function submitLocation(position)
   {
     alert("submitting!: ");
-    position = navigator.geolocation.getCurrentPosition(getPos)
     var Can = Parse.Object.extend("Can");
     var can = new Can();
     lat=position.coords.latitude;
@@ -121,13 +123,18 @@ function submitLocation()
       success: function(can) {
         // Execute any logic that should take place after the object is saved.
         alert('saved your new can with accuracy: ' + acc + ' meters' );
+        watchId = navigator.geolocation.watchPosition(showPosition);
+
       },
       error: function(can, error) {
         // Execute any logic that should take place if the save fails.
         // error is a Parse.Error with an error code and description.
         alert('Failed to save, error code: ' + error.description);
+        watchId = navigator.geolocation.watchPosition(showPosition);
+
       }
     });
+
   }
 
   </script>
