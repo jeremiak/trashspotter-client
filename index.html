@@ -19,8 +19,7 @@
     <p>with parse(.com) as the database and all javascript that runs client side</p>
 
     <ul>
-      <li>need map to show existing locations</li>
-      <li> need much more</li>
+      <li>hi</li>
     </ul>
 
     <div style="display:none" class="error">
@@ -28,17 +27,11 @@
     </div>
 
     <div style="display:none" class="success">
-      <p>We've also just created your first object using the following code:</p>
-      
-        <code>
-          var TestObject = Parse.Object.extend("TestObject");<br/>
-          var testObject = new TestObject();<br/>
-          testObject.save({foo: "bar"});
-        </code>
+      hi again!
     </div>
   </div>
   <p>
-  <p>we think you're here:</p>
+  <p>green = existing cans, red = you</p>
     <p id="curr_loc">  </p>
   <div id="mapholder"></div>
  <button onclick="submitLocation()">I'm next to a trash can!</button>
@@ -67,29 +60,74 @@ function showPosition(position)
   lat=position.coords.latitude;
   lon=position.coords.longitude;
   latlon=new google.maps.LatLng(lat, lon)
-  acc=position.coords.accuracy
-  x.innerHTML="position data: " + latlon + acc;  
+  acc=position.coords.accuracy;
+  x.innerHTML="you at: " + latlon + "<br> accuracy in meters: " + acc;  
   mapholder=document.getElementById('mapholder')
   mapholder.style.height='250px';
-  mapholder.style.width='100%';
+  mapholder.style.width='50%';
 
   var myOptions={
-  center:latlon,zoom:14,
+  center:latlon,zoom:16,
   mapTypeId:google.maps.MapTypeId.ROADMAP,
   mapTypeControl:false,
   navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
   };
   var map=new google.maps.Map(document.getElementById("mapholder"),myOptions);
-  var marker=new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
+  var currentMarker=new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
+  var canIcon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 
-  // var img_url = "http://maps.googleapis.com/maps/api/staticmap?center="
-  // +latlon+"&zoom=14&size=400x300&sensor=false";
+  var Can = Parse.Object.extend("Can");
+  var query = new Parse.Query(Can);
+  query.lessThan("acc", 60);    
+  query.find({
+    success: function(results) {
+      x.innerHTML = x.innerHTML + "<br>Successfully retrieved " + results.length + " can locations."
+      // var canMarker = new google.maps.Marker({position:latlon,map:map,title:"another can!",icon:canIcon});
+     
+      // Do something with the returned Parse.Object values
+      for (var i = 0; i < results.length; i++) { 
+          latlon=new google.maps.LatLng(results[i].get('lat'),results[i].get('lon')) 
+          var canMarker = new google.maps.Marker({position:latlon,map:map,title:"another can!",icon:canIcon});
+      }
+    },
+    error: function(error) {
+      alert("Error: " + error.code + " " + error.message);
+    }
 
-  // document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
+
+  });
   }
 
+function getPos(position)
+  {
+  return position;
+  }
 function submitLocation()
   {
+    alert("submitting!: ");
+    position = navigator.geolocation.getCurrentPosition(getPos)
+    var Can = Parse.Object.extend("Can");
+    var can = new Can();
+    lat=position.coords.latitude;
+    lon=position.coords.longitude;
+    latlon=new google.maps.LatLng(lat, lon)
+    acc=position.coords.accuracy;
+    // these should probably be passed to submitLocation()
+
+    can.set("lat", lat);
+    can.set("lon", lon);
+    can.set("acc", acc);
+    can.save(null, {
+      success: function(can) {
+        // Execute any logic that should take place after the object is saved.
+        alert('saved your new can with accuracy: ' + acc + ' meters' );
+      },
+      error: function(can, error) {
+        // Execute any logic that should take place if the save fails.
+        // error is a Parse.Error with an error code and description.
+        alert('Failed to save, error code: ' + error.description);
+      }
+    });
   }
 
   </script>
