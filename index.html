@@ -38,6 +38,7 @@
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
       <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+      <script type="text/javascript" src="getaccuratecurrentposition.js"></script>
 
   </head>
   <body>
@@ -87,7 +88,7 @@
 
         ts.getLocation = function(opts) {
           if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(opts.success, opts.error,{timout:5000,enableHighAccuracy:true,maximumAge:0});
+            navigator.geolocation.getAccurateCurrentPosition(opts.success, opts.error,function(){},{desiredAccuracy:20,maxWait:15000});
           } else {
             opts.error && opts.error("Location not supported");
           }
