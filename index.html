@@ -87,7 +87,7 @@
 
         ts.getLocation = function(opts) {
           if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(opts.success, opts.error);
+            navigator.geolocation.getCurrentPosition(opts.success, opts.error,{timout:0,enableHighAccuracy:true,maximumAge:Infinity);
           } else {
             opts.error && opts.error("Location not supported");
           }
@@ -187,7 +187,7 @@
         };
 
         ts.init = function() {
-          ts.pingHeroku();
+          // ts.pingHeroku();
           ts.getLocation({
             success: function(data) {
               ts.map = ts.initMap(data);
