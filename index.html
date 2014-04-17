@@ -105,10 +105,10 @@
               alert("submitting!: ");
                   var Can = Parse.Object.extend("Can");
                   var can = new Can();
-                  lat=position.coords.latitude;
-                  lon=position.coords.longitude;
+                  lat=data.coords.latitude;
+                  lon=data.coords.longitude;
                   latlon=new google.maps.LatLng(lat, lon)
-                  acc=position.coords.accuracy;
+                  acc=data.coords.accuracy;
                   // these should probably be passed to submitLocation()
 
                   can.set("lat", lat);
