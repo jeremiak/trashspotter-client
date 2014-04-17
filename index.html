@@ -88,7 +88,7 @@
 
         ts.getLocation = function(opts) {
           if (navigator.geolocation) {
-            navigator.geolocation.getAccurateCurrentPosition(opts.success, opts.error,{desiredAccuracy:20,maxWait:15000});
+            navigator.geolocation.getAccurateCurrentPosition(opts.success, opts.error,function(){},{desiredAccuracy:20,maxWait:15000});
           } else {
             opts.error && opts.error("Location not supported");
           }
