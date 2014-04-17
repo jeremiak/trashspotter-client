@@ -107,7 +107,7 @@
                   var can = new Can();
                   lat=data.coords.latitude;
                   lon=data.coords.longitude;
-                  latlon=new google.maps.LatLng(lat, lon)
+                  // latlon=new google.maps.LatLng(lat, lon)
                   acc=data.coords.accuracy;
                   // these should probably be passed to submitLocation()
 
@@ -182,6 +182,30 @@
               map: map
             });
           }
+
+          var canIcon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+
+          var Can = Parse.Object.extend("Can");
+          var query = new Parse.Query(Can);
+          query.lessThan("acc", 60);    
+          query.find({
+            success: function(results) {
+              console.log( "<br>Successfully retrieved " + results.length + " can locations.");
+              // var canMarker = new google.maps.Marker({position:latlon,map:map,title:"another can!",icon:canIcon});
+             
+              for (var i = 0; i < results.length; i++) { 
+                  latlon=new google.maps.LatLng(results[i].get('lat'),results[i].get('lon'));
+                  var canMarker = new google.maps.Marker({
+                    position:latlon,
+                    map:map,
+                    title:"another can!",
+                    icon:canIcon});
+              }
+            },
+            error: function(error) {
+              alert("Error: " + error.code + " " + error.message);
+            }
+          });
 
           return map;
         };
