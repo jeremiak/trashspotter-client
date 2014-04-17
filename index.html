@@ -37,6 +37,8 @@
      }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+      <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+
   </head>
   <body>
     <div id="google_canvas"></div>
@@ -66,6 +68,7 @@
     </div>
     
     <script type="text/javascript">
+    Parse.initialize("mdcl9TzaR9eXsEnUdIhGtUGqUBwLQbHlKIyKhl1G", "NDdDQsfMWLAPHTjI8ctVFEdCJsYTxcoy00Q7beKu"); 
       (function() {
         var ts = {};
         ts.DEFAULT_ZOOM = 18;
@@ -99,24 +102,51 @@
 
           ts.getLocation({
             success: function(data) {
-              var xhr = new XMLHttpRequest(),
-                  coords,
-                  parameters;
+              alert("submitting!: ");
+                  var Can = Parse.Object.extend("Can");
+                  var can = new Can();
+                  lat=position.coords.latitude;
+                  lon=position.coords.longitude;
+                  latlon=new google.maps.LatLng(lat, lon)
+                  acc=position.coords.accuracy;
+                  // these should probably be passed to submitLocation()
 
-              coords = data.coords;
-              parameters = encodeURI('lat=' + coords.latitude + 
-                '&long=' + coords.longitude + 
-                '&accuracy=' + coords.accuracy);
-              xhr.open('POST', ts.herokuHost + '/garbage_can');
-              xhr.send(parameters);
-              xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                  alert('Got it!');
-                }
-                else if (xhr.readyState === 4 && xhr.status !== 200){
-                  alert('Try again');
-                }
-              };
+                  can.set("lat", lat);
+                  can.set("lon", lon);
+                  can.set("acc", acc);
+                  can.save(null, {
+                    success: function(can) {
+                      // Execute any logic that should take place after the object is saved.
+                      alert('saved your new can with accuracy: ' + acc + ' meters' );
+                      // watchId = navigator.geolocation.watchPosition(showPosition);
+
+                    },
+                    error: function(can, error) {
+                      // Execute any logic that should take place if the save fails.
+                      // error is a Parse.Error with an error code and description.
+                      alert('Failed to save, error code: ' + error.description);
+                      // watchId = navigator.geolocation.watchPosition(showPosition);
+
+                    }
+                  });
+              // var xhr = new XMLHttpRequest(),
+              //     coords,
+              //     parameters;
+
+              // coords = data.coords;
+              // parameters = encodeURI('lat=' + coords.latitude + 
+              //   '&long=' + coords.longitude + 
+              //   '&accuracy=' + coords.accuracy);
+              // xhr.open('POST', ts.herokuHost + '/garbage_can');
+              // xhr.send(parameters);
+              // xhr.onreadystatechange = function() {
+              //   if (xhr.readyState === 4 && xhr.status === 200) {
+              //     alert('Got it!');
+              //   }
+              //   else if (xhr.readyState === 4 && xhr.status !== 200){
+              //     alert('Try again');
+              //   }
+              // };
             },
             error: function(err) { 
               console.debug(err);
